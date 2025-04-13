@@ -1,0 +1,58 @@
+{
+  "name": "gas-gmail-forward",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "author": "Jack Cho",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "deploy": "yarn build && cd dist && clasp push",
+    "sort-deps": "yarn sort-package-json",
+    "lint": "run-p prettier:check lint:script",
+    "format": "run-p prettier:write lint:script:fix",
+    "lint:script": "eslint \"src/**/*.ts\"",
+    "lint:script:fix": "eslint --fix \"src/**/*.ts\"",
+    "type:check": "tsc --project tsconfig.check.json --pretty --noEmit",
+    "prettier:check": "prettier --check --ignore-path .gitignore \"src/**/*.ts\"",
+    "prettier:write": "prettier --end-of-line lf --ignore-path .gitignore --write \"src/**/*.ts\"",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "src/*.{js,ts}": "eslint --cache --fix",
+    "src/*.{js,ts,md}": "prettier --write"
+  },
+  "dependencies": {
+    "crypto-js": "^4.1.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.24.0",
+    "@types/copy-webpack-plugin": "^10.1.3",
+    "@types/crypto-js": "^4.1.1",
+    "@types/google-apps-script": "^1.0.97",
+    "@types/webpack-bundle-analyzer": "^4.6.0",
+    "@typescript-eslint/eslint-plugin": "8.29.1",
+    "@typescript-eslint/parser": "^8.29.1",
+    "copy-webpack-plugin": "^13.0.0",
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.2",
+    "gas-webpack-plugin": "^2.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.5.3",
+    "sort-package-json": "^3.0.0",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.5",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^6.0.1"
+  },
+  "volta": {
+    "node": "23.9.0",
+    "yarn": "4.9.0"
+  }
+}
