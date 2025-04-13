@@ -29,7 +29,7 @@ const config: Configuration = {
   plugins: [
     new GasPlugin(),
     new CopyPlugin({
-      patterns: [{ from: "./src/appsscript.json" }, { from: "./secret/.clasp.json" }],
+      patterns: [{ from: "appsscript.json" }, { from: ".clasp.json" }],
     }),
     // new BundleAnalyzerPlugin(),
   ],
