@@ -359,6 +359,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/date-fns@npm:^2.6.3":
+  version: 2.6.3
+  resolution: "@types/date-fns@npm:2.6.3"
+  dependencies:
+    date-fns: "npm:*"
+  checksum: 10c0/ad39324ad26b1ec4f9e1fd66536ef5a1090f9a00f4d5cbb0cb4c20caa731b98d3fd7f28e08ed0a0225cf2aea2d2a157722cf6c9954aa6133d510d4452345e803
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.3":
   version: 3.7.4
   resolution: "@types/eslint-scope@npm:3.7.4"
@@ -1442,6 +1451,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:*, date-fns@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "date-fns@npm:4.1.0"
+  checksum: 10c0/b79ff32830e6b7faa009590af6ae0fb8c3fd9ffad46d930548fbb5acf473773b4712ae887e156ba91a7b3dc30591ce0f517d69fd83bd9c38650fdc03b4e0bac8
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.13":
+  version: 1.11.13
+  resolution: "dayjs@npm:1.11.13"
+  checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
+  languageName: node
+  linkType: hard
+
 "debounce@npm:^1.2.1":
   version: 1.2.1
   resolution: "debounce@npm:1.2.1"
@@ -2198,6 +2221,7 @@ __metadata:
     "@types/axios": "npm:^0.14.4"
     "@types/copy-webpack-plugin": "npm:^10.1.3"
     "@types/crypto-js": "npm:^4.1.1"
+    "@types/date-fns": "npm:^2.6.3"
     "@types/google-apps-script": "npm:^1.0.97"
     "@types/webpack-bundle-analyzer": "npm:^4.6.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.29.1"
@@ -2205,6 +2229,8 @@ __metadata:
     axios: "npm:^1.8.4"
     copy-webpack-plugin: "npm:^13.0.0"
     crypto-js: "npm:^4.1.1"
+    date-fns: "npm:^4.1.0"
+    dayjs: "npm:^1.11.13"
     eslint: "npm:^9.24.0"
     eslint-config-prettier: "npm:^10.1.2"
     gas-webpack-plugin: "npm:^2.6.0"

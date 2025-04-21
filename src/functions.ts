@@ -1,5 +1,6 @@
 import { HmacSHA256, enc } from 'crypto-js';
-import { GmailMessageSchema } from "./dataclass"
+import { GmailMessage, GmailRawMessageSchema, parseTransactionInfo, TransactionInfo } from "./dataclass"
+import dayjs from "./lib/dayjs";
 
 function hmac256Signature(message: string, secret: string): string {
   const hashedMessage = HmacSHA256(message, secret);
@@ -8,20 +9,32 @@ function hmac256Signature(message: string, secret: string): string {
   return signature;
 }
 
-function extractFromHeader(headers: { name: string; value: string }[]): string {
+function extractSendFrom(headers: { name: string; value: string }[]): string {
   const fromHeader = headers.find(h => h.name.toLowerCase() === 'from');
   return fromHeader?.value || 'Unknown Sender';
 }
 
 
-function listMessages(userId: string, timeAfter: number, timeBefore: number): void {
-  // Step 1: Rough query with day-level filtering to minimize results
-  const afterDate = new Date(timeAfter).toISOString().slice(0, 10).replace(/-/g, '/'); // YYYY/MM/DD
-  const beforeDate = new Date(timeBefore).toISOString().slice(0, 10).replace(/-/g, '/'); // YYYY/MM/DD
-  const query = `after:${afterDate} before:${beforeDate}`;
+function listMessages(
+  userId: string,
+  timeAfter: dayjs.Dayjs,
+  timeBefore: dayjs.Dayjs,
+  filter?: {
+    from?: string,
+    keyword?: string,
+  }
+): GmailMessage[] {
+  const timeFormat = "YYYY/MM/DD";
+  const parts = [
+    `after:${timeAfter.format(timeFormat)}`,
+    `before:${timeBefore.format(timeFormat)}`,
+  ];
+  if (filter?.from) parts.push(`from:${filter.from}`);
+
+  const query = parts.join(" ");
 
   let pageToken: string | undefined = undefined;
-
+  const res: GmailMessage[] = [];
   do {
     const response: GoogleAppsScript.Gmail.Schema.ListMessagesResponse | undefined = Gmail.Users?.Messages?.list(
       userId,
@@ -36,28 +49,47 @@ function listMessages(userId: string, timeAfter: number, timeBefore: number): vo
     }
 
     const messages = response?.messages || [];
-
+    console.warn(`Len: ${messages.length}`)
     for (const msg of messages) {
       const rawMessage = Gmail.Users?.Messages?.get(userId, msg.id!);
       if (!rawMessage) continue;
 
-      const parseResult = GmailMessageSchema.safeParse(rawMessage);
+      const parseResult = GmailRawMessageSchema.safeParse(rawMessage);
       if (!parseResult.success) {
         Logger.log(`Invalid message schema: ${parseResult.error}`);
         continue;
       }
 
       const message = parseResult.data;
-      const internalDate = message.internalDate;
-      if (internalDate >= timeAfter && internalDate <= timeBefore) {
-        const from = extractFromHeader(message.payload.headers);
-        Logger.log(`From: ${from}, ID: ${message.id}, Time: ${new Date(internalDate).toISOString()}, Snippet: ${message.snippet}`);
-      }
+      const internalDate = dayjs(message.internalDate);
+      const from = extractSendFrom(message.payload.headers);
+      res.push({
+        from: from,
+        snippet: message.snippet ?? "",
+        time: internalDate,
+      })
     }
 
 
     pageToken = response?.nextPageToken;
   } while (pageToken);
+  return res;
 }
 
-export { listMessages, hmac256Signature };
+function listSMBCTransactions(
+  userId: string,
+  timeAfter: dayjs.Dayjs,
+  timeBefore: dayjs.Dayjs,
+): TransactionInfo[] {
+  const messages = listMessages(userId, timeAfter, timeBefore, { from: "smbc-debit@smbc-card.com", });
+  const transactions: TransactionInfo[] = [];
+  for (const message of messages) {
+    const parsedTransaction = parseTransactionInfo(message);
+    if (parsedTransaction) {
+      transactions.push(parsedTransaction);
+    }
+  }
+  return transactions;
+}
+
+export { listMessages, hmac256Signature, listSMBCTransactions };

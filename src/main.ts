@@ -1,13 +1,16 @@
 /* eslint-disable */
-import { listMessages, hmac256Signature } from './functions';
+import { listMessages, hmac256Signature, listSMBCTransactions } from './functions';
+import dayjs from "./lib/dayjs";
 const main = () => {
   const digestMessage = hmac256Signature('Hello', 'secret');
   Logger.log(`Hello World ${digestMessage}`);
   const userId = 'me';
-  const timeAfter = new Date('2025-04-01T06:00:00Z').getTime();
-  const timeBefore = new Date('2025-04-02T06:15:00Z').getTime();
-
-  listMessages(userId, timeAfter, timeBefore);
+  const now = dayjs().toISOString();
+  const timeAfter = dayjs(now).subtract(1, "day").set("hour", 0).set("minute", 0).set("second", 0);
+  const timeBefore = dayjs(now)
+  console.log(`${timeAfter} ~ ${timeBefore}`)
+  const res = listSMBCTransactions(userId, timeAfter, timeBefore);
+  console.log(JSON.stringify(res, null, 4));
 };
 
 (global as any).main = main;
